@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -16,9 +17,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Customer and transaction routes
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('index');  // Matches `index.blade.php`
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers');
     Route::get('/add-customer', [CustomerController::class, 'create'])->name('add-customer');

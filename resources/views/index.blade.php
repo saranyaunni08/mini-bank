@@ -103,7 +103,7 @@
                     <div class="card bg-primary text-white mb-4">
                         <div class="card-body">
                           <h5><a href="{{ route('customers') }}" class="text-white">Total Users</a></h5>
-                          <p class="mb-0">{{ $totalCustomers }}</p>
+                          <p class="mb-0">{{ $totalCustomers ?? 0 }}</p>
                         </div>                     
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                     <div class="card bg-success text-white mb-4">
                         <div class="card-body">
                           <h5>Total Revenue</h5>
-                          <p class="mb-0">{{ $totalRevenue }}</p>
+                          <p class="mb-0">{{ $totalRevenue ?? 0 }}</p>
                         </div>                      
                     </div>
                 </div>

@@ -1,13 +1,15 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\TransactionController;
-use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TransactionController;
 
-Route::post('/login', [AuthController::class, 'login']); // API login route
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/transactions/credit', [TransactionController::class, 'credit']);
-    Route::post('/transactions/debit', [TransactionController::class, 'debit']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::middleware('auth:sanctum')->post('/transaction/credit', [TransactionController::class, 'credit']);
+    Route::post('/transaction/debit', [TransactionController::class, 'debit']);
 });

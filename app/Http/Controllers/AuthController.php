@@ -3,39 +3,41 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    // Show the login form
-    public function showLoginForm()
-    {
-        return view('login'); // Matches `resources/views/login.blade.php`
-    }
-
-    // Handle login request
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->route('dashboard')->with('success', 'Login successful');
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages([
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
         }
 
-        return back()->withErrors(['email' => 'Invalid credentials'])->onlyInput('email');
+        $token = $user->createToken('API Token')->plainTextToken;
+
+        return response()->json([
+            'token' => $token,
+            'message' => 'Login successful'
+        ], 200);
     }
 
-    // Handle logout
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        $request->user()->tokens()->delete();
 
-        return redirect()->route('login')->with('success', 'Logged out successfully');
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ]);
     }
 }
